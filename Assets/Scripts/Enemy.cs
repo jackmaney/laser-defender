@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour {
 
-    private static Sprite[] sprites;
     private EnemySpriteLoader spriteLoader;
 
     public EnemyColor EColor;
@@ -12,6 +11,7 @@ public class Enemy : MonoBehaviour {
 
 
 	void Start () {
+
         spriteLoader = FindObjectOfType<EnemySpriteLoader>();
 
         SetSprite();
@@ -21,12 +21,13 @@ public class Enemy : MonoBehaviour {
     public void SetSprite() {
         
         if(index >= 0 && index <= 4) {
-            GetComponent<SpriteRenderer>().sprite = 
-                spriteLoader.GetSprite(EColor, index);
+            GetComponent<SpriteRenderer>().sprite =
+                FindObjectOfType<EnemySpriteLoader>().
+                    GetSprite(EColor, index);
         }
         else {
-            GetComponent<SpriteRenderer>().sprite = 
-                spriteLoader.Random(EColor);
+            GetComponent<SpriteRenderer>().sprite =
+                FindObjectOfType<EnemySpriteLoader>().Random(EColor);
         }
 
         if(GetComponent<PolygonCollider2D>() != null) {

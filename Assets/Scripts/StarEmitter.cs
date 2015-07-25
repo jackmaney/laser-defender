@@ -55,7 +55,11 @@ public class StarEmitter : MonoBehaviour {
         while(active){
             Vector3 position = new Vector3(RandomXCoordinate(),
                     yMax + Star.MaxSize, 0);
-            Instantiate(starPrefab, position, Quaternion.identity);
+            GameObject star = 
+                Instantiate(starPrefab, position, Quaternion.identity) 
+                    as GameObject;
+
+            star.transform.SetParent(transform, false);
             
             yield return new WaitForSeconds(WaitTime());
         
