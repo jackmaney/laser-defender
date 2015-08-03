@@ -3,47 +3,71 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour {
 
-    private EnemySpriteLoader spriteLoader;
+    public int Health = 150;
 
     public EnemyColor EColor;
 
-    public int index = -1 ; // 0 to 4 to pick a particular ship
+    public int index = -1; // 0 to 4 to pick a particular ship
 
+    public Sprite EnemySprite;
 
-	void Start () {
+    private EnemySpawner spawner;
+    private ScoreKeeper scoreKeeper;
+    private AudioManager audioManager;
 
-        spriteLoader = FindObjectOfType<EnemySpriteLoader>();
+    void Awake() {
 
-        SetSprite();
-    }
+        audioManager = FindObjectOfType<AudioManager>();
+        spawner = FindObjectOfType<EnemySpawner>();
+        scoreKeeper = FindObjectOfType<ScoreKeeper>();
 
-
-    public void SetSprite() {
-        
-        if(index >= 0 && index <= 4) {
-            GetComponent<SpriteRenderer>().sprite =
+        if (index >= 0 && index <= 4) {
+            EnemySprite =
                 FindObjectOfType<EnemySpriteLoader>().
                     GetSprite(EColor, index);
+
+            GetComponent<SpriteRenderer>().sprite = EnemySprite;
         }
         else {
-            GetComponent<SpriteRenderer>().sprite =
+            EnemySprite =
                 FindObjectOfType<EnemySpriteLoader>().Random(EColor);
+            GetComponent<SpriteRenderer>().sprite = EnemySprite;
         }
 
-        if(GetComponent<PolygonCollider2D>() != null) {
+        if (GetComponent<PolygonCollider2D>() != null) {
             Destroy(GetComponent<PolygonCollider2D>());
         }
 
-        PolygonCollider2D poly = 
+        PolygonCollider2D poly =
             gameObject.AddComponent<PolygonCollider2D>();
 
         poly.isTrigger = true;
-
     }
 
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    void Die() {
+        spawner.ReCountEnemies = true;
+        scoreKeeper.EnemyDestroyed();
+        audioManager.Play(audioManager.EnemyDeathClip,
+                transform.position, 0.25f);
+        Destroy(gameObject);
+    }
+
+    void TakeDamage(int damage) {
+        Health -= damage;
+
+        if(Health <= 0) {
+            Die();
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision) {
+        Projectile projectile =
+            collision.gameObject.GetComponent<Projectile>();
+
+        if (projectile != null) {
+            TakeDamage(projectile.Damage);
+            projectile.HitShip(transform);
+        }
+    }
+
 }

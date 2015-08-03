@@ -3,19 +3,21 @@
 public class Trail : MonoBehaviour {
     
     private bool startedBecomingVisible = false;
-    private TrailRenderer tr;
+    private LineRenderer lr;
     
 	void Start () {
-	    tr = GetComponent<TrailRenderer>();
+	    lr = GetComponent<LineRenderer>();
 	}
 	
     void Update () {
 	    
-        if(!startedBecomingVisible && tr.isVisible){
+        if(!startedBecomingVisible && lr.isVisible){
             startedBecomingVisible = true;
         }
-        else if(startedBecomingVisible && !tr.isVisible){
-            Destroy(gameObject.GetComponentInParent<Star>().gameObject);
+        else if(startedBecomingVisible && !lr.isVisible){
+            Destroy(
+                gameObject.GetComponentInParent<Weapon>().gameObject);
+            Destroy(gameObject);
         }
         
 	}

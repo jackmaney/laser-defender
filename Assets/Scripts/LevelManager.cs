@@ -4,8 +4,19 @@ using UnityEditor;
 
 public class LevelManager : MonoBehaviour {
 
+    private MusicPlayer _music;
+
+    void Start() {
+        _music = FindObjectOfType<MusicPlayer>();
+    }
+
 	public void LoadLevel(string levelName){
 		Debug.Log("New Level load: " + levelName);
+        if(_music != null &&
+                _music.CurrentClip() != _music.DefaultMusic) {
+            _music.Play(_music.DefaultMusic);
+        }
+
 		Application.LoadLevel(levelName);
 	}
 
